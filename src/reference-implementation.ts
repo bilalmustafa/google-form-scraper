@@ -13,7 +13,7 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
           fields: text.querySelectorAll("div[role='listitem']:not([jsaction])")
             .map((item, index) => Object.assign({
               name: "question-" + index,
-              prompt: item.querySelector(`div[role="heading"]`)?.innerText.replace(" *", ""),
+              text: item.querySelector(`div[role="heading"]`)?.innerText.replace(" *", ""),
               required: item.querySelector(`div[role="heading"]`)?.innerText.includes("*"),
               type: item.querySelector(`div[role="radiogroup"]:not(span[dir='auto'])`) ? "presentation" :
                 item.querySelector(`div[role="radiogroup"] span[dir='auto']`) ? "radiogroup" :
@@ -24,16 +24,16 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
                           "unknown",
             },
               item.querySelectorAll(`div[role="list"]`).length > 0 ? {
-                options: item.querySelectorAll(`div[role="list"]`).map(item => ({ prompt: item.querySelector("span[dir='auto']")?.innerText }))
+                options: item.querySelectorAll(`div[role="list"]`).map(item => ({ text: item.querySelector("span[dir='auto']")?.innerText }))
               } : {},
               item.querySelectorAll(`div[role="radiogroup"] span[dir='auto']`).length > 0 ? {
-                options: item.querySelectorAll(`div[role="radiogroup"] span[dir='auto']`).map(item => ({ prompt: item.innerText }))
+                options: item.querySelectorAll(`div[role="radiogroup"] span[dir='auto']`).map(item => ({ text: item.innerText }))
               } : {},
 
               item.querySelectorAll(`div[role="radiogroup"] label`).length > 0 ? {
-                options: item.querySelectorAll(`div[role="radiogroup"] label`).map((_item, index) => ({ prompt: index })),
-                min: { prompt: item.querySelectorAll(`div[role="radiogroup"] label`).length > 0 && item.querySelectorAll(`div[role="radiogroup"] label`)[0].parentNode.firstChild?.innerText },
-                max: { prompt: item.querySelectorAll(`div[role="radiogroup"] label`).length > 0 && item.querySelectorAll(`div[role="radiogroup"] label`)[0].parentNode.lastChild?.innerText },
+                options: item.querySelectorAll(`div[role="radiogroup"] label`).map((_item, index) => ({ text: _item.parentNode.firstChild?.innerText, index: index })),
+                min: { text: item.querySelectorAll(`div[role="radiogroup"] label`).length > 0 && item.querySelectorAll(`div[role="radiogroup"] label`)[0].parentNode.firstChild?.innerText },
+                max: { text: item.querySelectorAll(`div[role="radiogroup"] label`).length > 0 && item.querySelectorAll(`div[role="radiogroup"] label`)[0].parentNode.lastChild?.innerText },
               } : {}
             ))
         });
