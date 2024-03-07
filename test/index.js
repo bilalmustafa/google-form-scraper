@@ -16,6 +16,14 @@
 //         })
 // })
 
+
+/*
+- Types Set
+- Images URL
+- Video URL
+- Grid
+*/
+
 const util = require('util');
 const scraper = require("../dist").GoogleFormsScraper();
 

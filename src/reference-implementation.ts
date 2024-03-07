@@ -13,18 +13,27 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
           fields: text.querySelectorAll("div[role='listitem']:not([jsaction])")
             .map((item, index) => Object.assign({
               name: "block-" + index,
-              text: item.querySelector(`div[role="heading"]`)?.innerText.replace(" *", ""),
-              required: item.querySelector(`div[role="heading"]`)?.innerText.includes("*"),
-              type: item.querySelector(`div[role="radiogroup"]:not(span[dir='auto'])`) ? "presentation" :
+              text: item.querySelector(`div[role="heading"]`)?.innerText.replace(" *", "") || item.querySelector('div[dir="auto"]:not([role]) span')?.innerText,
+              required: item.querySelector(`div[role="heading"]`)?.innerText.includes("*") || true,
+              type: item.querySelector(`div[role="radiogroup"]:not(span[dir='auto'])`) ? "Radio" :
                 item.querySelector(`div[role="radiogroup"] span[dir='auto']`) ? "radiogroup" :
+                item.querySelector('div[role="checkbox"]') ? "Checkbox" :
                   item.querySelector(`div[role="list"]`) ? "list" :
+                  item.querySelector(`iframe`) ? "Video" :
                     item.querySelector(`textarea`) ? "textarea" :
                     item.querySelector(`input[type='text'][role='combobox'][aria-label='Hour'], input[type='text'][role='combobox'][aria-label='Minute']`) ? "Time" :
                     item.querySelector(`input[type='text'][role='combobox']`) ? "Date" :
                       item.querySelector(`input[type='email']`) ? "email" :
                         item.querySelector(`input[type='text']`) ? "text" :
+                        item.querySelector('div[role="option"]') ? "Dropdown" :
+                         item.querySelector(`div[role="heading"]`) ? "block" :
                           "Unknown",
             },
+
+             item.querySelectorAll('div[role="option"]').length > 0 ? {
+              options: item.querySelectorAll('div[role=option]').slice(1).map(item => ({ text: item.querySelector("span")?.innerText }))
+             }: {},
+
               item.querySelectorAll(`div[role="list"]`).length > 0 ? {
                 options: item.querySelectorAll(`div[role="list"]`).map(item => ({ text: item.querySelector("span[dir='auto']")?.innerText }))
               } : {},
@@ -36,7 +45,16 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
                 options: item.querySelectorAll(`div[role="radiogroup"] label`).map((_item, index) => ({ text: _item.parentNode.firstChild?.innerText, index: index })),
                 min: { text: item.querySelectorAll(`div[role="radiogroup"] label`).length > 0 && item.querySelectorAll(`div[role="radiogroup"] label`)[0].parentNode.firstChild?.innerText },
                 max: { text: item.querySelectorAll(`div[role="radiogroup"] label`).length > 0 && item.querySelectorAll(`div[role="radiogroup"] label`)[0].parentNode.lastChild?.innerText },
-              } : {}
+              } : {},
+
+              item.querySelectorAll('div[role="checkbox"]').length > 0 ? { 
+              options: item.querySelectorAll('div[role=checkbox]').map(item => ({ text: item.parentNode.querySelector("span")?.innerText }))
+             }: {},
+
+             item.querySelectorAll('iframe').length > 0 ? { 
+              url: item.querySelectorAll('iframe')[0].getAttribute('src')
+             }: {}
+
             ))
         });
       });
