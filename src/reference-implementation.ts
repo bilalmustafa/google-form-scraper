@@ -19,6 +19,7 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
                 item.querySelector(`div[role="radiogroup"] span[dir='auto']`) ? "radiogroup" :
                   item.querySelector(`div[role="list"]`) ? "list" :
                     item.querySelector(`textarea`) ? "textarea" :
+                    item.querySelector(`input[type='text'][role='combobox'][aria-label='Hour'], input[type='text'][role='combobox'][aria-label='Minute']`) ? "Time" :
                     item.querySelector(`input[type='text'][role='combobox']`) ? "Date" :
                       item.querySelector(`input[type='email']`) ? "email" :
                         item.querySelector(`input[type='text']`) ? "text" :
