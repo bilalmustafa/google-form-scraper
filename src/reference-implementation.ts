@@ -15,17 +15,18 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
               name: "block-" + index,
               text: item.querySelector(`div[role="heading"]`)?.innerText.replace(" *", "") || item.querySelector('div[dir="auto"]:not([role]) span')?.innerText,
               required: item.querySelector(`div[role="heading"]`)?.innerText.includes("*") || true,
-              type: item.querySelector(`div[role="radiogroup"]:not(span[dir='auto'])`) ? "Radio" :
+              type: item.querySelector(`div[role="radiogroup"]:not(span[dir='auto'])`) ? "radio" :
                 item.querySelector(`div[role="radiogroup"] span[dir='auto']`) ? "radiogroup" :
-                item.querySelector('div[role="checkbox"]') ? "Checkbox" :
+                item.querySelector('div[role="checkbox"]') ? "checkbox" :
                   item.querySelector(`div[role="list"]`) ? "list" :
                   item.querySelector(`iframe`) ? "Video" :
                     item.querySelector(`textarea`) ? "textarea" :
-                    item.querySelector(`input[type='text'][role='combobox'][aria-label='Hour'], input[type='text'][role='combobox'][aria-label='Minute']`) ? "Time" :
-                    item.querySelector(`input[type='text'][role='combobox']`) ? "Date" :
+                    item.querySelector(`input[type='text'][role='combobox'][aria-label='Hour'], input[type='text'][role='combobox'][aria-label='Minute']`) ? "time" :
+                    item.querySelector(`input[type='text'][role='combobox']`) ? "date" :
                       item.querySelector(`input[type='email']`) ? "email" :
                         item.querySelector(`input[type='text']`) ? "text" :
-                        item.querySelector('div[role="option"]') ? "Dropdown" :
+                        item.querySelector('div[role="option"]') ? "dropdown" :
+                        item.querySelector(`img`) ? "image" :
                          item.querySelector(`div[role="heading"]`) ? "block" :
                           "Unknown",
             },
@@ -52,7 +53,11 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
              }: {},
 
              item.querySelectorAll('iframe').length > 0 ? { 
-              url: item.querySelectorAll('iframe')[0].getAttribute('src')
+              videoUrl: item.querySelectorAll('iframe')[0].getAttribute('src')
+             }: {},
+
+             item.querySelectorAll('img').length > 0 ? { 
+              imageUrl: item.querySelectorAll('img')[0].getAttribute('src')
              }: {}
 
             ))
