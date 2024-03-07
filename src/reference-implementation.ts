@@ -12,7 +12,7 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
           description: text.querySelector(`div[dir="auto"]:nth-child(2)`)?.innerText || "",
           fields: text.querySelectorAll("div[role='listitem']:not([jsaction])")
             .map((item, index) => Object.assign({
-              name: "question-" + index,
+              name: "block-" + index,
               text: item.querySelector(`div[role="heading"]`)?.innerText.replace(" *", ""),
               required: item.querySelector(`div[role="heading"]`)?.innerText.includes("*"),
               type: item.querySelector(`div[role="radiogroup"]:not(span[dir='auto'])`) ? "presentation" :
