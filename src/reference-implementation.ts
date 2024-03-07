@@ -15,8 +15,10 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
               name: "block-" + index,
               text: item.querySelector(`div[role="heading"]`)?.innerText.replace(" *", "") || item.querySelector('div[dir="auto"]:not([role]) span')?.innerText,
               required: item.querySelector(`div[role="heading"]`)?.innerText.includes("*") || true,
-              type: item.querySelector(`div[role="radiogroup"]:not(span[dir='auto'])`) ? "radio" :
+              type: item.querySelector(`div[role="radiogroup"]:not(span[dir='auto'])[data-field-index]`) ? "radiogrid" :
+              item.querySelector(`div[role="radiogroup"]:not(span[dir='auto'])`) ? "radio" :
                 item.querySelector(`div[role="radiogroup"] span[dir='auto']`) ? "radiogroup" :
+                item.querySelector('div[role="group"]') ? "checkboxgrid" :
                 item.querySelector('div[role="checkbox"]') ? "checkbox" :
                   item.querySelector(`div[role="list"]`) ? "list" :
                   item.querySelector(`iframe`) ? "Video" :
@@ -48,8 +50,8 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
                 max: { text: item.querySelectorAll(`div[role="radiogroup"] label`).length > 0 && item.querySelectorAll(`div[role="radiogroup"] label`)[0].parentNode.lastChild?.innerText },
               } : {},
 
-              item.querySelectorAll('div[role="checkbox"]').length > 0 ? { 
-              options: item.querySelectorAll('div[role=checkbox]').map(item => ({ text: item.parentNode.querySelector("span")?.innerText }))
+              item.querySelectorAll('div[role="checkbox"]:not([data-field-index])').length > 0 ? { 
+              options: item.querySelectorAll('div[role="checkbox"]:not([data-field-index])').map(item => ({ text: item.parentNode.querySelector("span")?.innerText }))
              }: {},
 
              item.querySelectorAll('iframe').length > 0 ? { 
@@ -58,7 +60,19 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
 
              item.querySelectorAll('img').length > 0 ? { 
               imageUrl: item.querySelectorAll('img')[0].getAttribute('src')
-             }: {}
+             }: {},
+
+             item.querySelectorAll(`div[role="radiogroup"]:not(span[dir='auto'])[data-field-index]`).length > 0 ? {
+              rows: item.querySelectorAll(`div[role="radiogroup"]:not(span[dir='auto'])[data-field-index]`).map(item => ({text: item.getAttribute('aria-label'), index: item.getAttribute('data-field-index')})),
+              columns: item.querySelectorAll(`div[role="radiogroup"]:not(span[dir='auto'])[data-field-index]`)[0].parentNode.firstChild?.childNodes.slice(1).map(childItem => ({text: childItem.innerText}))
+             } : {},
+
+
+             item.querySelectorAll('div[role="group"]').length > 0 ? {
+              rows: item.querySelectorAll('div[role="group"]').map(item => ({text: item.childNodes[0].innerText})),
+              columns: item.querySelectorAll('div[role="group"]')[0].parentNode.firstChild?.childNodes.slice(1).map(childItem => ({text: childItem.innerText})),
+              options: ""
+             } : {}
 
             ))
         });
@@ -74,3 +88,6 @@ export const GoogleFormsScraperReference: GoogleFormsScraper = (dependencies: { 
     getFormTemplate: getFormTemplateReference
   }
 }
+
+
+//data-field-index
