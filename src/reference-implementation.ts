@@ -8,8 +8,8 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
       .then(text => parse(text))
       .then(text => {
         return ({
-          title: text.querySelector(`div[role="heading"]:first-child`)?.innerText,
-          description: text.querySelector(`div[dir="auto"]:nth-child(2)`)?.innerText,
+          title: text.querySelector(`div[role="heading"]:first-child`)?.innerText || "",
+          description: text.querySelector(`div[dir="auto"]:nth-child(2)`)?.innerText || "",
           fields: text.querySelectorAll("div[role='listitem']:not([jsaction])")
             .map((item, index) => Object.assign({
               name: "question-" + index,
@@ -19,9 +19,10 @@ function getForm(dependencies: { fetch: typeof fetch; htmlParser: typeof parse; 
                 item.querySelector(`div[role="radiogroup"] span[dir='auto']`) ? "radiogroup" :
                   item.querySelector(`div[role="list"]`) ? "list" :
                     item.querySelector(`textarea`) ? "textarea" :
+                    item.querySelector(`input[type='text'][role='combobox']`) ? "Date" :
                       item.querySelector(`input[type='email']`) ? "email" :
                         item.querySelector(`input[type='text']`) ? "text" :
-                          "unknown",
+                          "Unknown",
             },
               item.querySelectorAll(`div[role="list"]`).length > 0 ? {
                 options: item.querySelectorAll(`div[role="list"]`).map(item => ({ text: item.querySelector("span[dir='auto']")?.innerText }))

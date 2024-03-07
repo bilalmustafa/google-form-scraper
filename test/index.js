@@ -19,7 +19,7 @@
 const util = require('util');
 const scraper = require("../dist").GoogleFormsScraper();
 
-const input = { url: "https://docs.google.com/forms/d/e/1FAIpQLScKWVyi2PGa6mAVWpVRgmafDSUgNhLeZq44u5P-TDm4A_yEqw/viewform" }
+const input = { url: "https://docs.google.com/forms/d/e/1FAIpQLSeG7cGqUZ4FhohjWkv3Ei_AYWEiAR9A4qk-ZV1qOUWUs8FNLw/viewform" }
     //Act
     scraper.getFormTemplate(input)
         //Assert
